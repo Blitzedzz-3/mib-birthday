@@ -7,42 +7,96 @@
   <style>
     body {
       font-family: 'Arial', sans-serif;
+      margin: 0;
+      overflow: hidden;
       background: linear-gradient(to right, #6a11cb, #2575fc);
+      color: #fff;
+      text-align: center;
+    }
+
+    #overlay {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.9);
       display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      z-index: 100;
+      cursor: pointer;
+    }
+
+    #overlay h1 {
+      font-size: 3rem;
+      margin-bottom: 20px;
+    }
+
+    #main {
+      display: none;
       flex-direction: column;
       justify-content: center;
       align-items: center;
       height: 100vh;
-      margin: 0;
-      color: #fff;
-      text-align: center;
     }
-    h1 {
-      font-size: 3rem;
-      margin-bottom: 20px;
-    }
+
     #countdown {
       font-size: 2rem;
       background: rgba(0,0,0,0.2);
       padding: 20px;
       border-radius: 15px;
-      display: inline-block;
+      margin-bottom: 30px;
+    }
+
+    #pet {
+      width: 150px;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+
+    #pet.petting {
+      transform: scale(1.2) rotate(10deg);
     }
   </style>
 </head>
 <body>
-  <h1>Countdown to Mib's Birthday!</h1>
-  <div id="countdown"></div>
+
+  <div id="overlay">
+    <h1>Click to Enter</h1>
+  </div>
+
+  <div id="main">
+    <h1>Countdown to Mib's Birthday!</h1>
+    <div id="countdown"></div>
+    <img id="pet" src="assets/6106c9fb07c027b77916f7d7ba1a404e.png" alt="Pet">
+    <p>Click the pet to give it love!</p>
+  </div>
+
+  <audio id="bgMusic" loop>
+    <source src="assets/NUMBER.mp3" type="audio/mpeg">
+  </audio>
 
   <script>
+    const overlay = document.getElementById('overlay');
+    const main = document.getElementById('main');
+    const bgMusic = document.getElementById('bgMusic');
+
+    overlay.addEventListener('click', () => {
+      overlay.style.display = 'none';
+      main.style.display = 'flex';
+      bgMusic.play();
+    });
+
     const birthday = new Date("October 22, 2025 00:00:00").getTime();
+    const countdownEl = document.getElementById('countdown');
 
     function updateCountdown() {
       const now = new Date().getTime();
       const distance = birthday - now;
 
       if(distance < 0){
-        document.getElementById("countdown").innerHTML = "🎉 Erm what the birthday 🎉";
+        countdownEl.innerHTML = "🎉 Erm what the birthday 🎉";
         clearInterval(timer);
         return;
       }
@@ -52,13 +106,17 @@
       const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
       const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-      document.getElementById("countdown").innerHTML = `
-        ${days}d ${hours}h ${minutes}m ${seconds}s
-      `;
+      countdownEl.innerHTML = `${days}d ${hours}h ${minutes}m ${seconds}s`;
     }
 
     const timer = setInterval(updateCountdown, 1000);
     updateCountdown();
+
+    const pet = document.getElementById('pet');
+    pet.addEventListener('click', () => {
+      pet.classList.add('petting');
+      setTimeout(() => pet.classList.remove('petting'), 300);
+    });
   </script>
 </body>
 </html>
